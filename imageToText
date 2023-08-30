@@ -1,0 +1,43 @@
+#!/usr/bin/python3
+import pytesseract
+from PIL import Image
+import sys
+
+def print_help():
+    print("Usage: imageToText image_path")
+    print("Converts an image to text using pytesseract and PIL (Pillow).")
+    sys.exit()
+
+if len(sys.argv) == 2 and sys.argv[1] == 'help':
+    print_help()
+
+if len(sys.argv) != 2:
+    print("Error: Incorrect number of arguments. Use 'imageToText help' for usage instructions.")
+    sys.exit(1)
+
+image_path = sys.argv[1]
+
+def image_to_text(image_path):
+    # Open the image file
+    with Image.open(image_path) as image:
+        # Perform OCR using Tesseract
+        text = pytesseract.image_to_string(image)
+
+    return text
+
+def remove_empty_lines(text):
+    lines = []
+    for line in text:
+        if line.strip():
+            lines.append(line)
+    return lines
+
+# Example usage
+text = image_to_text(image_path)
+cleaned_text = remove_empty_lines(text.split("\n"))
+
+results_file_path = "results.txt"
+with open(results_file_path, "w") as results_file:
+    results_file.write("\n".join(cleaned_text))
+
+print(f"Text extracted from {image_path} and saved to {results_file_path}")
